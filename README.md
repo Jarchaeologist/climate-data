@@ -22,10 +22,6 @@ Run them in this order:
 3. **`download.py`** – downloads the daily data and saves it as CSV.
    For other stations: change the station IDs in the `fetch(...)` calls and the
    CSV filenames.
-4. **`check.py`** (optional) – verifies the downloaded file (dates, gaps,
-   plausible values, day boundaries, and monthly values against DMI's own
-   figures). Should end with all checks passed. Only needed after a new
-   download; it is written for the stations below and needs adapting for others.
 
 ## Stations used
 
@@ -68,19 +64,6 @@ If you change the period:
 `coverage.py` still uses the plain UTC window. That is fine for counting days,
 but don't reuse it for downloading.
 
-## Data quality
-
-Checked: no missing, extra or duplicate dates; daily values match summed hourly
-values on Danish local days; monthly means/totals match DMI's own monthly values.
-
-- `max_relative_hum` and `min_relative_hum` are removed in `download.py`
-  (no data after September 2018). `mean_relative_hum` covers the full period.
-- `max_precip_30m` is empty on some days.
-- `max_temp_w_date` may carry the time of the maximum in its timestamp; only
-  the date part is used.
-- Sunshine (Sjælsmark, 06188), April 2023: the sum of daily values is 259.7 h,
-  while DMI's monthly value for the same station is 256.3 h. All other months
-  match. Treated as a known exception in check.py.
 
 ## Source and license
 
