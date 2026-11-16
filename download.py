@@ -1,14 +1,13 @@
 import requests
 import pandas as pd
 
-START, END = "2015-01-01", "2024-12-31"
 URL = "https://opendataapi.dmi.dk/v2/climateData/collections/stationValue/items"
 
 def fetch(station, parameter=None):
     params = {
         "stationId": station,
         "timeResolution": "day",
-        "datetime": "2014-12-31T23:00:00Z/2024-12-31T22:59:59Z",
+        "datetime": "2014-12-31T23:00:00Z/2024-12-31T22:59:59Z",  # Danish local days, see README
         "limit": 10000,
     }
     if parameter:
@@ -32,7 +31,10 @@ df = pd.concat([
 df["date"] = pd.to_datetime(df["from"].str[:10])
 wide = df.pivot_table(index="date", columns="parameterId", values="value", aggfunc="first")
 
-wide.to_csv("dmi_gundsoemagle_2015-2024.csv")                          # standard CSV
+# Max/min humidity has no data after September 2018 (see README)
+wide = wide.drop(columns=["max_relative_hum", "min_relative_hum"], errors="ignore")
+
+wide.to_csv("dmi_gundsoemagle_2015-2024.csv")                              # standard CSV
 wide.to_csv("dmi_gundsoemagle_2015-2024_excel.csv", sep=";", decimal=",")  # Danish Excel
 print(wide.shape)
 print(wide.head())

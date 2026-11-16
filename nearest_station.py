@@ -2,11 +2,18 @@ import requests, math
 import pandas as pd
 
 LAT, LON = 55.7353, 12.1481          # Gundsømagle Kirke
+RADIUS_KM = 25                       # search radius
 START, END = "2015-01-01", "2024-12-31"
 
+# Search area calculated from the coordinates (1° latitude ≈ 111 km)
+dlat = RADIUS_KM / 111
+dlon = RADIUS_KM / (111 * math.cos(math.radians(LAT)))
+bbox = f"{LON - dlon:.4f},{LAT - dlat:.4f},{LON + dlon:.4f},{LAT + dlat:.4f}"
+
 url = "https://opendataapi.dmi.dk/v2/climateData/collections/station/items"
-params = {"bbox": "11.85,55.55,12.45,55.92", "limit": 1000}
-feats = requests.get(url, params=params).json()["features"]
+r = requests.get(url, params={"bbox": bbox, "limit": 1000})
+r.raise_for_status()
+feats = r.json()["features"]
 
 def km(lat1, lon1, lat2, lon2):
     p = math.pi / 180
@@ -28,10 +35,14 @@ for f in feats:
         "km": round(km(LAT, LON, lat, lon), 1),
     })
 
-df = pd.DataFrame(rows).sort_values(["km", "from"])
-# Keep stations that started before START and either are still running or ended after END
+df = pd.DataFrame(rows)
 df["from"] = pd.to_datetime(df["from"], errors="coerce", utc=True)
 df["to"] = pd.to_datetime(df["to"], errors="coerce", utc=True)
-ok = (df["from"] <= pd.Timestamp(START, tz="UTC")) & \
+df = df.sort_values(["km", "from"])
+
+# Keep stations within the radius that started before START
+# and either are still running or ended after END
+ok = (df["km"] <= RADIUS_KM) & \
+     (df["from"] <= pd.Timestamp(START, tz="UTC")) & \
      (df["to"].isna() | (df["to"] >= pd.Timestamp(END, tz="UTC")))
 print(df[ok].drop_duplicates("stationId").to_string(index=False))
