@@ -22,6 +22,10 @@ Run them in this order:
 3. **`download.py`** – downloads the daily data and saves it as CSV.
    For other stations: change the station IDs in the `fetch(...)` calls and the
    CSV filenames.
+4. **`check.py`** (optional) – verifies the downloaded file: dates, gaps,
+   plausible values, day boundaries, and monthly values against DMI's own
+   figures. Should end with all checks passed. Only needed after a new
+   download. It is written for the stations below and needs adapting for others.
 
 ## Stations used
 
@@ -46,7 +50,7 @@ DMI labels daily values by **Danish local time** (a day runs midnight to
 midnight Danish time), but the `datetime` filter in the API request is in
 **UTC**. Midnight in Danish winter time is 23:00 UTC the day before.
 
-So `download.py` uses this window to get 1 Jan 2015 – 31 Dec 2024:
+So `download.py` and `check.py` use this window to get 1 Jan 2015 – 31 Dec 2024:
 
     "datetime": "2014-12-31T23:00:00Z/2024-12-31T22:59:59Z"
 
@@ -60,20 +64,27 @@ If you change the period:
 - Start/end in summer (CEST): subtract 2 hours → `T22:00:00Z` the day before.
 - The dates in the file are taken from the first 10 characters of DMI's `from`
   field. Do not convert to UTC, as that moves every value one day back.
+- In `check.py`, also update `START`, `END`, `WINDOW` and `CSV` at the top.
 
 `coverage.py` still uses the plain UTC window. That is fine for counting days,
 but don't reuse it for downloading.
 
 ## Data quality
 
-The data has been checked: complete dates (no missing, extra or duplicate days),
-and monthly means/totals match DMI's own monthly values.
+Verified with `check.py` (all 19 checks passed): complete dates (no missing,
+extra or duplicate days), plausible values, daily values match summed hourly
+values on Danish local days, and monthly means/totals match DMI's own monthly
+values.
 
 - `max_relative_hum` and `min_relative_hum` are removed in `download.py`
   (no data after September 2018). `mean_relative_hum` covers the full period.
 - `max_precip_30m` is empty on some days.
-- Sunshine (Sjælsmark), April 2023: the daily values sum to 3.4 h more than
-  DMI's monthly figure. All other months match.
+- `max_temp_w_date` may carry the time of the maximum in its timestamp; only
+  the date part is used.
+- Sunshine (Sjælsmark, 06188), April 2023: the daily values sum to 259.7 h,
+  while DMI's monthly value for the same station is 256.3 h. All other months
+  match. This is a minor inconsistency in DMI's own data and is treated as a
+  known exception in `check.py`.
 
 ## Source and license
 
