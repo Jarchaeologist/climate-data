@@ -60,6 +60,10 @@ If you change the period:
 `coverage.py` still uses the plain UTC window. That is fine for counting days,
 but don't reuse it for downloading.
 
+*`check.py`** – verifies the downloaded file (dates, gaps, plausible values,
+   day boundaries, and monthly values against DMI's own figures).
+   Should end with all checks passed.
+
 ## Data quality
 
 Checked: no missing, extra or duplicate dates; daily values match summed hourly
