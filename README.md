@@ -6,8 +6,6 @@ Only station data is used, no interpolated values.
 
 See also
 https://wetterdienst.readthedocs.io/en/latest/data/provider/dmi/observation/index.html
-and URL
-https://opendataapi.dmi.dk/v2/climateData/
 
 ## Requirements
 
