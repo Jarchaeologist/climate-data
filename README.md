@@ -71,17 +71,6 @@ but don't reuse it for downloading.
    day boundaries, and monthly values against DMI's own figures).
    Should end with all checks passed.
 
-## Data quality
-
-Checked: no missing, extra or duplicate dates; daily values match summed hourly
-values on Danish local days; monthly means/totals match DMI's own monthly values.
-
-- `max_relative_hum` and `min_relative_hum` are removed in `download.py`
-  (no data after September 2018). `mean_relative_hum` covers the full period.
-- `max_precip_30m` is empty on some days.
-- `max_temp_w_date` may carry the time of the maximum in its timestamp; only
-  the date part is used.
-
 ## Source and license
 
 Data © DMI (Danish Meteorological Institute), licensed under CC BY 4.0.
