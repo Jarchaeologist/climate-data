@@ -1,6 +1,6 @@
 # DMI climate data – Gundsømagle Kirke
 
-Downloads 10 years (2015–2024) of daily climate data from
+Downloads 10 years (2015–2024) of daily, quality-controlled climate data from
 DMI's Climate Data API for the area around Gundsømagle Kirke (55.735°N, 12.148°E).
 Only station data is used, no interpolated values.
 
@@ -13,18 +13,19 @@ Only station data is used, no interpolated values.
 
 Run them in this order:
 
-1. **`nearest_station.py`** – lists DMI stations near the location that were in
-   operation for the whole period, sorted by distance.
-   For another location: change `LAT, LON` **and** the `bbox` (the search area,
-   roughly ±0.2° around the point). Changing only the coordinates still
-   searches around Gundsømagle.
+1. **`nearest_station.py`** – lists DMI stations within `RADIUS_KM` (default
+   25 km) of the location that were in operation for the whole period, sorted
+   by distance. For another location: change `LAT, LON`.
 2. **`coverage.py`** – checks how many days of data each candidate station has
    for selected parameters (complete = 3,653 days for 2015–2024).
    For other stations: change the station IDs in `stations`.
 3. **`download.py`** – downloads the daily data and saves it as CSV.
    For other stations: change the station IDs in the `fetch(...)` calls and the
    CSV filenames.
-
+4. **`check.py`** (optional) – verifies the downloaded file (dates, gaps,
+   plausible values, day boundaries, and monthly values against DMI's own
+   figures). Should end with all checks passed. Only needed after a new
+   download; it is written for the stations below and needs adapting for others.
 
 ## Stations used
 
@@ -41,7 +42,7 @@ from Sjælsmark and stored in a separate column, `bright_sunshine_06188`.
 - `dmi_gundsoemagle_2015-2024.csv` – standard CSV (comma-separated, decimal point)
 - `dmi_gundsoemagle_2015-2024_excel.csv` – for Danish Excel (semicolon, decimal comma)
 
-One row per day (3,653 days), one column per parameter.
+One row per day (3,653 days), one column per parameter (15 columns).
 
 ## Dates – read this before changing the period
 
@@ -67,9 +68,19 @@ If you change the period:
 `coverage.py` still uses the plain UTC window. That is fine for counting days,
 but don't reuse it for downloading.
 
-*`check.py`** – verifies the downloaded file (dates, gaps, plausible values,
-   day boundaries, and monthly values against DMI's own figures).
-   Should end with all checks passed.
+## Data quality
+
+Checked: no missing, extra or duplicate dates; daily values match summed hourly
+values on Danish local days; monthly means/totals match DMI's own monthly values.
+
+- `max_relative_hum` and `min_relative_hum` are removed in `download.py`
+  (no data after September 2018). `mean_relative_hum` covers the full period.
+- `max_precip_30m` is empty on some days.
+- `max_temp_w_date` may carry the time of the maximum in its timestamp; only
+  the date part is used.
+- Sunshine (Sjælsmark, 06188), April 2023: the sum of daily values is 259.7 h,
+  while DMI's monthly value for the same station is 256.3 h. All other months
+  match. Treated as a known exception in check.py.
 
 ## Source and license
 
