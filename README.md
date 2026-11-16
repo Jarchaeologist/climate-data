@@ -13,11 +13,18 @@ Only station data is used, no interpolated values.
 
 Run them in this order:
 
-1. **`nearest_station.py`** – lists DMI stations within ~20 km of the church
-   that were in operation for the whole period, sorted by distance.
+1. **`nearest_station.py`** – lists DMI stations near the location that were in
+   operation for the whole period, sorted by distance.
+   For another location: change `LAT, LON` **and** the `bbox` (the search area,
+   roughly ±0.2° around the point). Changing only the coordinates still
+   searches around Gundsømagle.
 2. **`coverage.py`** – checks how many days of data each candidate station has
-   for selected parameters (complete = 3,653 days).
+   for selected parameters (complete = 3,653 days for 2015–2024).
+   For other stations: change the station IDs in `stations`.
 3. **`download.py`** – downloads the daily data and saves it as CSV.
+   For other stations: change the station IDs in the `fetch(...)` calls and the
+   CSV filenames.
+
 
 ## Stations used
 
