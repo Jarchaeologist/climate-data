@@ -3,6 +3,7 @@
 Downloads 10 years (2015–2024) of daily, quality-controlled climate data from
 DMI's Climate Data API for the area around Gundsømagle Kirke (55.735°N, 12.148°E).
 Only station data is used, no interpolated values.
+
 See also
 https://wetterdienst.readthedocs.io/en/latest/data/provider/dmi/observation/index.html
 and URL
