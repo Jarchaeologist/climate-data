@@ -64,6 +64,16 @@ If you change the period:
 `coverage.py` still uses the plain UTC window. That is fine for counting days,
 but don't reuse it for downloading.
 
+## Data quality
+
+The data has been checked: complete dates (no missing, extra or duplicate days),
+and monthly means/totals match DMI's own monthly values.
+
+- `max_relative_hum` and `min_relative_hum` are removed in `download.py`
+  (no data after September 2018). `mean_relative_hum` covers the full period.
+- `max_precip_30m` is empty on some days.
+- Sunshine (Sjælsmark), April 2023: the daily values sum to 3.4 h more than
+  DMI's monthly figure. All other months match.
 
 ## Source and license
 
