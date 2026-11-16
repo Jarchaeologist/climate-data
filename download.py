@@ -8,7 +8,7 @@ def fetch(station, parameter=None):
     params = {
         "stationId": station,
         "timeResolution": "day",
-        "datetime": f"{START}T00:00:00Z/{END}T23:59:59Z",
+        "datetime": "2014-12-31T23:00:00Z/2024-12-31T22:59:59Z",
         "limit": 10000,
     }
     if parameter:
